@@ -1,0 +1,117 @@
+{
+  "name": "workflow_f1_verifica_backend",
+  "nodes": [
+    {
+      "parameters": {
+        "path": "check_backend",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -660,
+        -120
+      ],
+      "id": "0fd83b32-c8e8-447a-bd13-2c50a7055b60",
+      "name": "Webhook",
+      "webhookId": "8fbe8aa0-a034-469e-91c8-d5507d313859"
+    },
+    {
+      "parameters": {
+        "respondWith": "allIncomingItems",
+        "options": {
+          "responseCode": 200
+        }
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.3,
+      "position": [
+        -40,
+        -120
+      ],
+      "id": "d103a2c1-2a53-47b2-84c1-4462f8a8905c",
+      "name": "Respond to Webhook"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "Select 1 as status",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.mySql",
+      "typeVersion": 2.4,
+      "position": [
+        -440,
+        -120
+      ],
+      "id": "a83d305d-5235-4695-89be-532235cd1b6b",
+      "name": "Execute a SQL query",
+      "credentials": {
+        "mySql": {
+          "id": "xqXLa3ArfozCAkQa",
+          "name": "MySQL NEXA Base Nova"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Verifica se há erros na operação do banco de dados\nif ($node[\"Execute a SQL query\"].error) {\n  return {\n    statusCode: 500,\n    body: {\n      status: \"error\",\n      message: \"Database connection failed\",\n      details: $node[\"executeQuery\"].error.message\n    }\n  };\n}\n\n// Se chegou aqui, a conexão está OK\nreturn {\n  statusCode: 200,\n  body: {\n    status: \"Ok\",\n    message: \"Database Up\",\n    response: $node[\"Execute a SQL query\"].json\n  }\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -240,
+        -120
+      ],
+      "id": "5693d08b-61f4-4fe0-92ed-2b2ea58ea706",
+      "name": "Code"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Execute a SQL query",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute a SQL query": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "109a76c1-7a94-428f-ac96-8c1726f88289",
+  "meta": {
+    "instanceId": "fcb5f0895e8bd938a6eb24682c2e5b421a93863fd1f30e8a9e6bc0bd4e986fb8"
+  },
+  "id": "krtlYn0N8ri0Y5rz",
+  "tags": []
+}

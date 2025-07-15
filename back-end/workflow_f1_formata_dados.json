@@ -1,0 +1,339 @@
+{
+  "name": "workflow_f1_formata_dados",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "/upload-csv",
+        "responseMode": "responseNode",
+        "options": {
+          "binaryPropertyName": ""
+        }
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -800,
+        -20
+      ],
+      "id": "ca098df0-9c07-4971-8e3d-1f635ba2dca6",
+      "name": "Webhook",
+      "webhookId": "51ff257d-4b12-4c60-ab56-4e55ae079445"
+    },
+    {
+      "parameters": {
+        "jsCode": "// A variável 'items' contém os dados de entrada do nó anterior (extract csv)\nconst newItems = [];\n\nfor (const item of items) {\n  newItems.push({\n    json: {\n      nota: item.json.nota,\n      data_emissao: item.json.data_emissao, // Já está no formato YYYY-MM-DD HH:MM:SS\n      chave: item.json.chave,\n      status: item.json.status,\n      tipo_documento: item.json.tipo_documento,\n      cfop: parseFloat(item.json.cfop), // Converte para número de ponto flutuante\n      cst: parseFloat(item.json.cst),   // Converte para número de ponto flutuante\n      csosn: parseFloat(item.json.csosn), // Converte para número de ponto flutuante\n      icms: parseFloat(item.json.icms), // Converte para número de ponto flutuante\n      ipi: parseFloat(item.json.ipi),   // Converte para número de ponto flutuante\n      pis: parseFloat(item.json.pis),   // Converte para número de ponto flutuante\n      cofins: parseFloat(item.json.cofins), // Converte para número de ponto flutuante\n      iss: parseFloat(item.json.iss),     // Converte para número de ponto flutuante\n      tipo_evento: item.json.tipo_evento,\n      id_emitente: parseInt(item.json.id_emitente, 10), // Converte para inteiro\n      id_destinatario: parseInt(item.json.id_destinatario, 10) // Converte para inteiro\n    }\n  });\n}\n\nreturn newItems;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        280,
+        -80
+      ],
+      "id": "7c88e4b4-86fc-4950-8560-1d3f910c2946",
+      "name": "Code",
+      "alwaysOutputData": true,
+      "executeOnce": true
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "{\n  \"success\": true,\n  \"message\": \"Notas fiscais importadas com sucesso\"\n}\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        220,
+        200
+      ],
+      "id": "7bebf458-21c6-4427-9f55-77039889bde9",
+      "name": "Respond to Webhook"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "tO0ppsQIWWV4mGOr",
+          "mode": "list",
+          "cachedResultName": "workflow_f1_persiste_dados"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        540,
+        0
+      ],
+      "id": "b77ace60-a0e6-45ae-9f47-1fe0628d2c20",
+      "name": "Execute Workflow"
+    },
+    {
+      "parameters": {
+        "content": "## Recebe arquivo csv!",
+        "height": 420
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -860,
+        -100
+      ],
+      "id": "2dd36bdb-9795-4aca-9866-68ef8b738afc",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "## Converte de csv para json\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nApós a conversão envia para o node formatar...",
+        "height": 380,
+        "width": 260,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -380,
+        -120
+      ],
+      "id": "7576511f-d131-4aef-a717-2514ca2069bf",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "## Converte o json para o formato aceito no Banco.",
+        "height": 280,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        200,
+        -200
+      ],
+      "id": "2602a556-41a0-47bd-bedc-daf95b231606",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "content": "## Chama o workflow_f1_persiste_dados",
+        "height": 320,
+        "width": 280
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        460,
+        -120
+      ],
+      "id": "0974031c-46c5-4c8f-9a70-ed82f7fd90e5",
+      "name": "Sticky Note3"
+    },
+    {
+      "parameters": {
+        "inputSource": "passthrough"
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -800,
+        160
+      ],
+      "id": "7aec3c24-882c-4e6e-87c4-9172ccf84e3a",
+      "name": "When Executed by Another Workflow"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -600,
+        -380
+      ],
+      "id": "0f294d33-f7d0-4806-8d0b-14bb4a5e886b",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1,
+      "position": [
+        -320,
+        0
+      ],
+      "id": "79d69792-dce3-4371-a039-e810fb7ed1cb",
+      "name": "Extract from File"
+    }
+  ],
+  "pinData": {
+    "When clicking ‘Execute workflow’": [
+      {
+        "json": {
+          "nota": "020",
+          "data_emissao": "2025-06-25 00:00:00",
+          "chave": "35150612345678000123550010000000200000000200",
+          "status": "Autorizada",
+          "tipo_documento": "NF-e",
+          "cfop": 1301,
+          "cst": 70,
+          "csosn": 400,
+          "icms": 129.5,
+          "ipi": 18,
+          "pis": 7.5,
+          "cofins": 10,
+          "iss": 0,
+          "tipo_evento": "entrada",
+          "cpf_cnpj_emitente": "61894858042",
+          "nome_emitente": "Mercadinho do Jo?o",
+          "cpf_cnpj_destinatario": "48215147020",
+          "nome_destinatario": "Maria Gomes Lima"
+        }
+      },
+      {
+        "json": {
+          "nota": "021",
+          "data_emissao": "2025-06-25 00:00:00",
+          "chave": "35150612345678000123550010000000210000000210",
+          "status": "Autorizada",
+          "tipo_documento": "NF-e",
+          "cfop": 1301,
+          "cst": 70,
+          "csosn": 400,
+          "icms": 129.5,
+          "ipi": 18,
+          "pis": 7.5,
+          "cofins": 10,
+          "iss": 0,
+          "tipo_evento": "saida",
+          "cpf_cnpj_emitente": "93378905000180",
+          "nome_emitente": "Loja da Joana",
+          "cpf_cnpj_destinatario": "78860379016",
+          "nome_destinatario": "Pedro Lima"
+        }
+      },
+      {
+        "json": {
+          "nota": "001",
+          "data_emissao": "2025-06-25 00:00:00",
+          "chave": "35150612345678000123550010000000211000000210",
+          "status": "Autorizada",
+          "tipo_documento": "NFS-e",
+          "cfop": 5933,
+          "cst": 0,
+          "csosn": 0,
+          "icms": 0,
+          "ipi": 0,
+          "pis": 6.5,
+          "cofins": 9.75,
+          "iss": 30,
+          "tipo_evento": "saida",
+          "cpf_cnpj_emitente": "28499726000130",
+          "nome_emitente": "Padaria Italiana",
+          "cpf_cnpj_destinatario": "78534970084",
+          "nome_destinatario": "Amadeu Lopes"
+        }
+      },
+      {
+        "json": {
+          "nota": "001",
+          "data_emissao": "2025-06-25 00:00:00",
+          "chave": "35150612345678000123550010000000233000000230",
+          "status": "Autorizada",
+          "tipo_documento": "NFC-e",
+          "cfop": 5102,
+          "cst": 60,
+          "csosn": 102,
+          "icms": 25,
+          "ipi": 0,
+          "pis": 1.65,
+          "cofins": 2.5,
+          "iss": 0,
+          "tipo_evento": "saida",
+          "cpf_cnpj_emitente": "28499726000130",
+          "nome_emitente": "Padaria Italiana",
+          "cpf_cnpj_destinatario": null,
+          "nome_destinatario": null
+        }
+      }
+    ]
+  },
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Extract from File",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "Execute Workflow",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "Extract from File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        []
+      ]
+    },
+    "Extract from File": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "7b59e94f-29c9-4459-99a9-e8f7a0ed71ae",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "fcb5f0895e8bd938a6eb24682c2e5b421a93863fd1f30e8a9e6bc0bd4e986fb8"
+  },
+  "id": "usMYG4Pcqp1kO1qY",
+  "tags": []
+}

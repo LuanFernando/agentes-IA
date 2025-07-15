@@ -1,0 +1,299 @@
+{
+  "name": "workflow_f1_recebe_arquivos",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "9d2aaabe-15b6-4fcb-b1e8-d278837841bc",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -320,
+        -280
+      ],
+      "id": "d3bd5432-8e01-47cc-99bf-cb2126491b1d",
+      "name": "Webhook",
+      "webhookId": "9d2aaabe-15b6-4fcb-b1e8-d278837841bc"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "a4306f16-8295-4c48-ae27-01e5f3ca1f98",
+              "leftValue": "={{ $binary.data.fileName }}",
+              "rightValue": ".csv",
+              "operator": {
+                "type": "string",
+                "operation": "endsWith"
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        60,
+        -180
+      ],
+      "id": "3f0186fc-434b-4afc-bc40-4d7ebfb3a679",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "yxYWDjC9or7Iijfm",
+          "mode": "list",
+          "cachedResultName": "workflow_f1_valida_campos_obrigatorios"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "file",
+              "displayName": "file",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        400,
+        -280
+      ],
+      "id": "2f0db862-22dc-4cbc-a0ad-030718beb589",
+      "name": "Execute Workflow"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "{\n  \"status_code\": 400,\n  \"message\": \"Extensão do arquivo inválido, necessário .xls ou .xlsx\",\n  \"data\": {\n    \n  }\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.3,
+      "position": [
+        400,
+        20
+      ],
+      "id": "a4d60b27-7e08-4a38-979b-7fa962684499",
+      "name": "Respond to Webhook"
+    },
+    {
+      "parameters": {
+        "options": {
+          "allowFileUploads": true
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -300,
+        20
+      ],
+      "id": "70533e40-2f23-4fda-a8ad-7cf8457a0d2e",
+      "name": "Chat de teste para envio manual do arquivo.",
+      "webhookId": "5d31f5d7-60d2-41b2-9f74-65ac204b97d5"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "{\n  \"status_code\": 200,\n  \"message\": \"Requisição processada com sucesso\",\n  \"data\": {\n  }\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        680,
+        -300
+      ],
+      "id": "04f608c1-eefe-41b5-8088-51dffe2d3b0f",
+      "name": "Respond to Webhook1"
+    },
+    {
+      "parameters": {
+        "content": "## Webhook que recebe o arquivo pela internet.\n\nChamada do tipo post.\n",
+        "height": 320,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -380,
+        -460
+      ],
+      "typeVersion": 1,
+      "id": "3d711d34-6c5b-4967-9d9d-7d2ea1b1b04b",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "Chat para testes internos sem a necessidade do webhook.\n",
+        "height": 260
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -380,
+        -80
+      ],
+      "typeVersion": 1,
+      "id": "aa8d0549-fc63-49bd-9eb0-6b54e8d3c214",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "Verificação do tipo do arquivo .csv = true.\noutros = false.",
+        "height": 320,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        0,
+        -340
+      ],
+      "typeVersion": 1,
+      "id": "444a820f-0003-4a06-a629-49b798eaf17d",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "content": "Chama o próximo fluxo passando o arquivo .csv\n",
+        "height": 320,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        340,
+        -420
+      ],
+      "typeVersion": 1,
+      "id": "cc91df23-bf48-495b-9046-185965a156e0",
+      "name": "Sticky Note3"
+    },
+    {
+      "parameters": {
+        "content": "Nó que gera uma resposta para o Webhook, este responde que a verificação foi negativa.",
+        "height": 260,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        340,
+        -60
+      ],
+      "typeVersion": 1,
+      "id": "5385fc0c-876f-4cb3-88ca-1ccc139d4bd5",
+      "name": "Sticky Note4"
+    },
+    {
+      "parameters": {
+        "content": "Nó que gera uma resposta para o Webhook, este responde que a verificação foi positiva.",
+        "height": 320,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        640,
+        -420
+      ],
+      "typeVersion": 1,
+      "id": "048ef863-629e-4963-a617-f1a47f6caadb",
+      "name": "Sticky Note7"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Execute Workflow",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Respond to Webhook": {
+      "main": [
+        [],
+        []
+      ]
+    },
+    "Chat de teste para envio manual do arquivo.": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute Workflow": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "31a004e2-c6a1-4e70-aeb1-fa2ede167088",
+  "meta": {
+    "instanceId": "fcb5f0895e8bd938a6eb24682c2e5b421a93863fd1f30e8a9e6bc0bd4e986fb8"
+  },
+  "id": "iQftM0g2R7oM9IwM",
+  "tags": []
+}

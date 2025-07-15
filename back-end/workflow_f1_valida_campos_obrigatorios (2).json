@@ -1,0 +1,298 @@
+{
+  "name": "workflow_f1_valida_campos_obrigatorios",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {
+          "allowFileUploads": true
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -280,
+        0
+      ],
+      "id": "770aabcf-421c-4926-8f38-82144c9f0140",
+      "name": "When chat message received",
+      "webhookId": "15a90da8-c61e-4847-bed9-aea234324657"
+    },
+    {
+      "parameters": {
+        "jsCode": "const output = [];\n\nfor (const item of $input.all()) {\n  const binaryKeys = Object.keys(item.binary || {});\n\n  for (const key of binaryKeys) {\n    const binaryData = item.binary[key];\n    const csvString = Buffer.from(binaryData.data, 'base64').toString('utf-8');\n\n    const lines = csvString.split('\\n').filter(line => line.trim() !== '');\n    const headers = lines[0].split(',');\n\n    const rows = lines.slice(1).map(line => {\n      const values = line.split(',');\n      const obj = {};\n      headers.forEach((h, i) => {\n        obj[h.trim()] = values[i]?.trim();\n      });\n      return { json: obj };\n    });\n\n    output.push(...rows);\n  }\n}\n\nreturn [\n  {\n    json: {\n      data: output\n    }\n  }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -40,
+        -120
+      ],
+      "id": "abc9c016-9740-4ca9-976d-831d09bda626",
+      "name": "Code",
+      "alwaysOutputData": false
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "801d8207-b3ff-4d2f-afca-0100bfb90169",
+              "leftValue": "={{ $json.data }}",
+              "rightValue": "",
+              "operator": {
+                "type": "array",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        220,
+        -120
+      ],
+      "id": "94c37e17-7adc-429f-9b40-8cd831ba9a25",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "jsCode": "let linha = 0;\nlet mensagensDeAlerta = [];\nlet camposObrigatorios = [\n  'nota', 'data_emissao', 'chave', 'status', 'tipo_documento',\n  'cfop', 'cst', 'csosn', 'icms', 'ipi', 'pis', 'cofins', 'iss', 'tipo_evento',\n  'id_emitente', 'id_destinatario'\n];\n\nconst dados = $input.first().json.data;\n\n// Percorre linha por linha obtida da planilha\nfor (const item of dados) {\n  if (linha > 0) { // Ignora o cabeçalho se houver\n    let camposFaltando = [];\n\n    // Verifica campos obrigatórios\n    for (const campo of camposObrigatorios) {\n      const valor = item.json?.[campo];\n\n      if (valor === undefined || valor === null || valor.toString().trim() === '') {\n        camposFaltando.push(campo);\n      }\n    }\n\n    // Se faltou algum campo, adiciona uma mensagem de alerta\n    if (camposFaltando.length > 0) {\n      mensagensDeAlerta.push({\n        linha: linha + 1, // adiciona +1 pois começa do zero\n        campos_faltando: camposFaltando,\n        dados_originais: item.json\n      });\n    }\n  }\n\n  linha++;\n}\n\n// Retorna alertas (pode ser enviado por email, log, etc)\nreturn [\n  {\n    json: {\n      alertas: mensagensDeAlerta\n    }\n  }\n];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        460,
+        -180
+      ],
+      "id": "a871ecc7-024c-4230-8557-54be466a773d",
+      "name": "Code1"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        460,
+        20
+      ],
+      "id": "2a8c78d4-5c73-4093-94c5-a5c8e8881bbb",
+      "name": "No Operation, do nothing"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        720,
+        -180
+      ],
+      "id": "9cd3b48c-09dc-4244-a988-0f7c7444d9c5",
+      "name": "No Operation, do nothing1"
+    },
+    {
+      "parameters": {
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "file",
+              "type": "any"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -280,
+        -240
+      ],
+      "id": "d3dd5418-6be3-491a-acd0-f5cf657d7bae",
+      "name": "When Executed by Another Workflow",
+      "notes": "Recebe o arquivo para validar os campos obrigatórios"
+    },
+    {
+      "parameters": {
+        "content": "## Recebe o arquivo para validar os campos obrigatórios.",
+        "height": 580,
+        "width": 320
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -400,
+        -420
+      ],
+      "typeVersion": 1,
+      "id": "d8f7feda-3d7a-4dab-816f-e409ce8d3713",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "## Usa o nó JS para percorrer e transformar os registros encontrados em JSON.",
+        "height": 360,
+        "width": 220,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -60,
+        -340
+      ],
+      "typeVersion": 1,
+      "id": "b48efcf4-766e-4fe4-a087-99a04a085fa4",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "## Valida se existe retorno do nó anterior (JS)",
+        "height": 300,
+        "width": 200,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        180,
+        -280
+      ],
+      "typeVersion": 1,
+      "id": "cbc1ee5f-50b6-4d66-a962-24cbbf90072d",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "content": "## Usa o nó JS para percorrer e validar se os campos obrigatórios foram preenchidos.\n\nSenão preenchido retorna as informações da linha que faltou informação.",
+        "height": 420,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        400,
+        -460
+      ],
+      "typeVersion": 1,
+      "id": "2e8cc08c-5285-4672-8570-d2547e6f8218",
+      "name": "Sticky Note3"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "usMYG4Pcqp1kO1qY",
+          "mode": "list",
+          "cachedResultName": "workflow_f1_formata_dados"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        740,
+        -380
+      ],
+      "id": "0ef0e35c-f8d7-4ae5-9456-7c6bca07c96e",
+      "name": "Execute Workflow",
+      "disabled": true
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Code1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code1": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "No Operation, do nothing1": {
+      "main": [
+        []
+      ]
+    },
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "1c054ad8-a2da-494f-827d-ecfcc353c6c9",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "fcb5f0895e8bd938a6eb24682c2e5b421a93863fd1f30e8a9e6bc0bd4e986fb8"
+  },
+  "id": "yxYWDjC9or7Iijfm",
+  "tags": []
+}

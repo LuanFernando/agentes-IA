@@ -1,0 +1,637 @@
+{
+  "name": "workflow_f1_persiste_dados",
+  "nodes": [
+    {
+      "parameters": {
+        "inputSource": "passthrough"
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -460,
+        -180
+      ],
+      "id": "e7d4cd2e-560d-4dd9-a435-d6b11068dc12",
+      "name": "When Executed by Another Workflow"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -180,
+        -100
+      ],
+      "id": "fd7e29ad-511a-4d17-9902-1f225f6e8ad9",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "amount": 1
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        560,
+        -60
+      ],
+      "id": "2cd4637c-44bd-4d72-87da-433e4e00bf9d",
+      "name": "Wait",
+      "webhookId": "194c1de6-9f05-41ab-bc55-dff61d60543c"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -480,
+        0
+      ],
+      "id": "ad3541c9-b5ba-4482-885f-1c30959687dc",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "table": {
+          "__rl": true,
+          "value": "tb_notas_fiscais",
+          "mode": "list",
+          "cachedResultName": "tb_notas_fiscais"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.mySql",
+      "typeVersion": 2.4,
+      "position": [
+        80,
+        -40
+      ],
+      "id": "531c4988-a314-4895-9860-a65de0355971",
+      "name": "Insert rows in a table",
+      "credentials": {
+        "mySql": {
+          "id": "xqXLa3ArfozCAkQa",
+          "name": "MySQL NEXA Base Nova"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        320,
+        -60
+      ],
+      "id": "b1a32263-4ffd-4049-aede-922754e76df6",
+      "name": "Registro sendo inserido na base"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "cee3e2fa-914c-4c98-900e-643f89dd1df7",
+              "name": "json.responseMessage",
+              "value": "Dados das notas fiscais inseridos com sucesso!",
+              "type": "string"
+            },
+            {
+              "id": "00b7fb6c-ae6a-4988-923f-fa8df35739e5",
+              "name": "json.status",
+              "value": "Sucesso",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        80,
+        -240
+      ],
+      "id": "0388a685-3d99-489b-939d-224bbacb75c2",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT * FROM tb_notas_fiscais;",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.mySql",
+      "typeVersion": 2.4,
+      "position": [
+        -240,
+        -300
+      ],
+      "id": "1a558a13-3b4d-417f-b750-d2a074a532d8",
+      "name": "Execute a SQL query",
+      "credentials": {
+        "mySql": {
+          "id": "xqXLa3ArfozCAkQa",
+          "name": "MySQL NEXA Base Nova"
+        }
+      }
+    }
+  ],
+  "pinData": {
+    "When clicking ‘Execute workflow’": [
+      {
+        "json": {
+          "nota": "001",
+          "data_emissao": "2025-06-01 00:00:00",
+          "chave": "35150612345678000123550010000000011000000010",
+          "status": "Autorizada",
+          "tipo_documento": "NF-e",
+          "cfop": "5102.00",
+          "cst": "60.00",
+          "csosn": "102.00",
+          "icms": "180.50",
+          "ipi": "45.00",
+          "pis": "20.50",
+          "cofins": "30.75",
+          "iss": "0.00",
+          "tipo_evento": "saida",
+          "id_emitente": 1,
+          "id_destinatario": 1
+        }
+      },
+      {
+        "json": {
+          "nota": "002",
+          "data_emissao": "2025-06-03 00:00:00",
+          "chave": "35150612345678000123550010000000022000000020",
+          "status": "Cancelada",
+          "tipo_documento": "NF-e",
+          "cfop": "5405.00",
+          "cst": "40.00",
+          "csosn": "300.00",
+          "icms": "90.00",
+          "ipi": "10.00",
+          "pis": "5.00",
+          "cofins": "7.60",
+          "iss": "0.00",
+          "tipo_evento": "saida",
+          "id_emitente": 1,
+          "id_destinatario": 1
+        }
+      },
+      {
+        "json": {
+          "nota": "003",
+          "data_emissao": "2025-06-05 00:00:00",
+          "chave": "35150612345678000123550010000000033000000030",
+          "status": "Autorizada",
+          "tipo_documento": "NFC-e",
+          "cfop": "6101.00",
+          "cst": "0.00",
+          "csosn": "103.00",
+          "icms": "150.00",
+          "ipi": "0.00",
+          "pis": "12.00",
+          "cofins": "18.00",
+          "iss": "0.00",
+          "tipo_evento": "saida",
+          "id_emitente": 1,
+          "id_destinatario": 1
+        }
+      },
+      {
+        "json": {
+          "nota": "004",
+          "data_emissao": "2025-06-06 00:00:00",
+          "chave": "35150612345678000123550010000000044000000040",
+          "status": "Denegada",
+          "tipo_documento": "NF-e",
+          "cfop": "1102.00",
+          "cst": "70.00",
+          "csosn": "400.00",
+          "icms": "0.00",
+          "ipi": "0.00",
+          "pis": "0.00",
+          "cofins": "0.00",
+          "iss": "0.00",
+          "tipo_evento": "entrada",
+          "id_emitente": 7,
+          "id_destinatario": 1
+        }
+      },
+      {
+        "json": {
+          "nota": "005",
+          "data_emissao": "2025-06-07 00:00:00",
+          "chave": "35150612345678000123550010000000055000000050",
+          "status": "Autorizada",
+          "tipo_documento": "NF-e",
+          "cfop": "5101.00",
+          "cst": "60.00",
+          "csosn": "102.00",
+          "icms": "275.25",
+          "ipi": "60.00",
+          "pis": "24.80",
+          "cofins": "35.40",
+          "iss": "10.00",
+          "tipo_evento": "saida",
+          "id_emitente": 1,
+          "id_destinatario": 1
+        }
+      },
+      {
+        "json": {
+          "nota": "006",
+          "data_emissao": "2025-06-10 00:00:00",
+          "chave": "35150612345678000123550010000000066000000060",
+          "status": "Autorizada",
+          "tipo_documento": "NF-e",
+          "cfop": "5102.00",
+          "cst": "60.00",
+          "csosn": "500.00",
+          "icms": "330.90",
+          "ipi": "0.00",
+          "pis": "28.00",
+          "cofins": "42.00",
+          "iss": "0.00",
+          "tipo_evento": "saida",
+          "id_emitente": 1,
+          "id_destinatario": 1
+        }
+      },
+      {
+        "json": {
+          "nota": "007",
+          "data_emissao": "2025-06-11 00:00:00",
+          "chave": "35150612345678000123550010000000077000000070",
+          "status": "Cancelada",
+          "tipo_documento": "NF-e",
+          "cfop": "5405.00",
+          "cst": "41.00",
+          "csosn": "400.00",
+          "icms": "0.00",
+          "ipi": "0.00",
+          "pis": "0.00",
+          "cofins": "0.00",
+          "iss": "0.00",
+          "tipo_evento": "saida",
+          "id_emitente": 1,
+          "id_destinatario": 1
+        }
+      },
+      {
+        "json": {
+          "nota": "008",
+          "data_emissao": "2025-06-12 00:00:00",
+          "chave": "35150612345678000123550010000000088000000080",
+          "status": "Autorizada",
+          "tipo_documento": "NFC-e",
+          "cfop": "6108.00",
+          "cst": "60.00",
+          "csosn": "201.00",
+          "icms": "120.00",
+          "ipi": "12.00",
+          "pis": "8.00",
+          "cofins": "11.00",
+          "iss": "0.00",
+          "tipo_evento": "saida",
+          "id_emitente": 1,
+          "id_destinatario": 1
+        }
+      },
+      {
+        "json": {
+          "nota": "009",
+          "data_emissao": "2025-06-14 00:00:00",
+          "chave": "35150612345678000123550010000000099000000090",
+          "status": "Autorizada",
+          "tipo_documento": "NF-e",
+          "cfop": "1101.00",
+          "cst": "60.00",
+          "csosn": "102.00",
+          "icms": "450.00",
+          "ipi": "75.00",
+          "pis": "33.00",
+          "cofins": "50.00",
+          "iss": "15.00",
+          "tipo_evento": "entrada",
+          "id_emitente": 4,
+          "id_destinatario": 1
+        }
+      },
+      {
+        "json": {
+          "nota": "010",
+          "data_emissao": "2025-06-15 00:00:00",
+          "chave": "35150612345678000123550010000000100000000100",
+          "status": "Autorizada",
+          "tipo_documento": "NF-e",
+          "cfop": "5102.00",
+          "cst": "0.00",
+          "csosn": "102.00",
+          "icms": "299.99",
+          "ipi": "20.00",
+          "pis": "15.00",
+          "cofins": "22.00",
+          "iss": "0.00",
+          "tipo_evento": "saida",
+          "id_emitente": 1,
+          "id_destinatario": 1
+        }
+      },
+      {
+        "json": {
+          "nota": "011",
+          "data_emissao": "2025-06-01 00:00:00",
+          "chave": "35150612345678000123550010000000111000000110",
+          "status": "Autorizada",
+          "tipo_documento": "NF-e",
+          "cfop": "1101.00",
+          "cst": "60.00",
+          "csosn": "101.00",
+          "icms": "215.00",
+          "ipi": "35.00",
+          "pis": "18.00",
+          "cofins": "27.00",
+          "iss": "0.00",
+          "tipo_evento": "entrada",
+          "id_emitente": 1,
+          "id_destinatario": 1
+        }
+      },
+      {
+        "json": {
+          "nota": "012",
+          "data_emissao": "2025-06-02 00:00:00",
+          "chave": "35150612345678000123550010000000122000000120",
+          "status": "Autorizada",
+          "tipo_documento": "NF-e",
+          "cfop": "1202.00",
+          "cst": "40.00",
+          "csosn": "400.00",
+          "icms": "128.90",
+          "ipi": "22.00",
+          "pis": "10.00",
+          "cofins": "15.00",
+          "iss": "0.00",
+          "tipo_evento": "entrada",
+          "id_emitente": 2,
+          "id_destinatario": 1
+        }
+      },
+      {
+        "json": {
+          "nota": "013",
+          "data_emissao": "2025-06-03 00:00:00",
+          "chave": "35150612345678000123550010000000133000000130",
+          "status": "Autorizada",
+          "tipo_documento": "NF-e",
+          "cfop": "1102.00",
+          "cst": "60.00",
+          "csosn": "102.00",
+          "icms": "300.00",
+          "ipi": "0.00",
+          "pis": "20.00",
+          "cofins": "30.00",
+          "iss": "0.00",
+          "tipo_evento": "entrada",
+          "id_emitente": 3,
+          "id_destinatario": 1
+        }
+      },
+      {
+        "json": {
+          "nota": "014",
+          "data_emissao": "2025-06-04 00:00:00",
+          "chave": "35150612345678000123550010000000144000000140",
+          "status": "Autorizada",
+          "tipo_documento": "NF-e",
+          "cfop": "1353.00",
+          "cst": "41.00",
+          "csosn": "103.00",
+          "icms": "92.50",
+          "ipi": "5.00",
+          "pis": "4.00",
+          "cofins": "6.00",
+          "iss": "0.00",
+          "tipo_evento": "entrada",
+          "id_emitente": 4,
+          "id_destinatario": 1
+        }
+      },
+      {
+        "json": {
+          "nota": "015",
+          "data_emissao": "2025-06-06 00:00:00",
+          "chave": "35150612345678000123550010000000155000000150",
+          "status": "Autorizada",
+          "tipo_documento": "NF-e",
+          "cfop": "1556.00",
+          "cst": "70.00",
+          "csosn": "500.00",
+          "icms": "275.75",
+          "ipi": "12.00",
+          "pis": "16.00",
+          "cofins": "24.00",
+          "iss": "0.00",
+          "tipo_evento": "entrada",
+          "id_emitente": 6,
+          "id_destinatario": 1
+        }
+      },
+      {
+        "json": {
+          "nota": "016",
+          "data_emissao": "2025-06-07 00:00:00",
+          "chave": "35150612345678000123550010000000166000000160",
+          "status": "Autorizada",
+          "tipo_documento": "NF-e",
+          "cfop": "1403.00",
+          "cst": "60.00",
+          "csosn": "101.00",
+          "icms": "315.00",
+          "ipi": "38.00",
+          "pis": "19.00",
+          "cofins": "28.00",
+          "iss": "0.00",
+          "tipo_evento": "entrada",
+          "id_emitente": 1,
+          "id_destinatario": 1
+        }
+      },
+      {
+        "json": {
+          "nota": "017",
+          "data_emissao": "2025-06-08 00:00:00",
+          "chave": "35150612345678000123550010000000177000000170",
+          "status": "Autorizada",
+          "tipo_documento": "NF-e",
+          "cfop": "1201.00",
+          "cst": "0.00",
+          "csosn": "400.00",
+          "icms": "85.20",
+          "ipi": "9.00",
+          "pis": "3.00",
+          "cofins": "5.00",
+          "iss": "0.00",
+          "tipo_evento": "entrada",
+          "id_emitente": 2,
+          "id_destinatario": 1
+        }
+      },
+      {
+        "json": {
+          "nota": "018",
+          "data_emissao": "2025-06-10 00:00:00",
+          "chave": "35150612345678000123550010000000188000000180",
+          "status": "Autorizada",
+          "tipo_documento": "NF-e",
+          "cfop": "1102.00",
+          "cst": "60.00",
+          "csosn": "102.00",
+          "icms": "450.00",
+          "ipi": "65.00",
+          "pis": "30.00",
+          "cofins": "45.00",
+          "iss": "0.00",
+          "tipo_evento": "entrada",
+          "id_emitente": 3,
+          "id_destinatario": 1
+        }
+      },
+      {
+        "json": {
+          "nota": "019",
+          "data_emissao": "2025-06-11 00:00:00",
+          "chave": "35150612345678000123550010000000199000000190",
+          "status": "Autorizada",
+          "tipo_documento": "NF-e",
+          "cfop": "1120.00",
+          "cst": "41.00",
+          "csosn": "500.00",
+          "icms": "198.99",
+          "ipi": "15.00",
+          "pis": "9.00",
+          "cofins": "13.50",
+          "iss": "0.00",
+          "tipo_evento": "entrada",
+          "id_emitente": 5,
+          "id_destinatario": 1
+        }
+      },
+      {
+        "json": {
+          "nota": "020",
+          "data_emissao": "2025-06-12 00:00:00",
+          "chave": "35150612345678000123550010000000200000000200",
+          "status": "Autorizada",
+          "tipo_documento": "NF-e",
+          "cfop": "1301.00",
+          "cst": "70.00",
+          "csosn": "400.00",
+          "icms": "129.50",
+          "ipi": "18.00",
+          "pis": "7.50",
+          "cofins": "10.00",
+          "iss": "0.00",
+          "tipo_evento": "entrada",
+          "id_emitente": 4,
+          "id_destinatario": 1
+        }
+      }
+    ]
+  },
+  "connections": {
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Insert rows in a table",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Insert rows in a table": {
+      "main": [
+        [
+          {
+            "node": "Registro sendo inserido na base",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Registro sendo inserido na base": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        []
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "1eb7ed93-c039-4c3f-a8b3-8bb1472c7d3a",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "fcb5f0895e8bd938a6eb24682c2e5b421a93863fd1f30e8a9e6bc0bd4e986fb8"
+  },
+  "id": "tO0ppsQIWWV4mGOr",
+  "tags": []
+}
